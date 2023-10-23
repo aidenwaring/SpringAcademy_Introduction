@@ -14,7 +14,7 @@ import java.net.URI;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class CashCardApplicationTests {
+class CashCardControllerTest {
     /*
     Inject a test helper that’ll allow us to
     make HTTP requests to the locally running application.
@@ -27,12 +27,11 @@ class CashCardApplicationTests {
         CashCard cashcard = new CashCard(null, 250.00);
         //Create the post request
         ResponseEntity<Void> createResponse = restTemplate.postForEntity("/cashcards", cashcard, Void.class);
-
         // Assert that it is created
         assertThat(createResponse.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-        URI locationOfNewCashCard = createResponse.getHeaders().getLocation();
 
         // Perform a get on the newly created resource, then assert it was GET successfully
+        URI locationOfNewCashCard = createResponse.getHeaders().getLocation();
         ResponseEntity<String> getResponse = restTemplate.getForEntity(locationOfNewCashCard, String.class);
         assertThat(getResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
 
@@ -52,7 +51,6 @@ class CashCardApplicationTests {
     @Test
     void shouldReturnACashCardWhenDataIsSaved() {
         ResponseEntity<String> response = restTemplate.getForEntity("/cashcards/99", String.class);
-
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
         // This converts the response String into a JSON-aware object with lots of helper methods.

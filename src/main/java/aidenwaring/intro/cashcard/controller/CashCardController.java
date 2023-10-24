@@ -1,11 +1,10 @@
-package aidenwaring.intro.cashcard;
+package aidenwaring.intro.cashcard.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
+import aidenwaring.intro.cashcard.record.CashCard;
+import aidenwaring.intro.cashcard.repository.CashCardRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -40,13 +39,18 @@ public class CashCardController {
         return ResponseEntity.created(locationOfNewCashCard).build();
     }
 
-    @GetMapping()
-    public ResponseEntity<Iterable<CashCard>> findAll() {
-        return ResponseEntity.ok(cashCardRepository.findAll());
+    @GetMapping
+    public ResponseEntity<List<CashCard>> getCashCards(Pageable pageable) {
+        Page<CashCard> page = cashCardRepository.findAll(
+                PageRequest.of(
+                        pageable.getPageNumber(),
+                        pageable.getPageSize()
+                ));
+        return ResponseEntity.ok(page.getContent());
     }
 
     @GetMapping("/{requestedId}")
-    public ResponseEntity<CashCard> findById(@PathVariable Long requestedId) {
+    public ResponseEntity<CashCard> getCashCard(@PathVariable Long requestedId) {
         Optional<CashCard> cashCardOptional = cashCardRepository.findById(requestedId);
         if (cashCardOptional.isPresent()) {
             return ResponseEntity.ok(cashCardOptional.get());

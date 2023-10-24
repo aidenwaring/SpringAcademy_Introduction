@@ -1,5 +1,6 @@
 package aidenwaring.intro.cashcard;
 
+import aidenwaring.intro.cashcard.record.CashCard;
 import org.assertj.core.util.Arrays;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

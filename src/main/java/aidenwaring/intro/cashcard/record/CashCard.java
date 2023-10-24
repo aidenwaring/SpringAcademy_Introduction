@@ -1,4 +1,4 @@
-package aidenwaring.intro.cashcard;
+package aidenwaring.intro.cashcard.record;
 
 import org.springframework.data.annotation.Id;
 

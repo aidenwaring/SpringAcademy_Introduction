@@ -5,6 +5,7 @@ import aidenwaring.intro.cashcard.repository.CashCardRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -44,7 +45,10 @@ public class CashCardController {
         Page<CashCard> page = cashCardRepository.findAll(
                 PageRequest.of(
                         pageable.getPageNumber(),
-                        pageable.getPageSize()
+                        pageable.getPageSize(),
+                        pageable.getSortOr(Sort.by(Sort.Direction.ASC, "amount"))
+                        // ^ Get sort from URI param or use the default specified here
+                        // Spring provides default page num and page size (page 0 and size 20)
                 ));
         return ResponseEntity.ok(page.getContent());
     }

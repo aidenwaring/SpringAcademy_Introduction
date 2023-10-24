@@ -40,14 +40,9 @@ public class CashCardController {
         return ResponseEntity.created(locationOfNewCashCard).build();
     }
 
-    @GetMapping
-    public ResponseEntity<List<CashCard>> findAll(Pageable pageable) {
-        Page<CashCard> page = cashCardRepository.findAll(
-                PageRequest.of(
-                        pageable.getPageNumber(),
-                        pageable.getPageSize(),
-                        pageable.getSortOr(Sort.by(Sort.Direction.DESC, "amount"))));
-        return ResponseEntity.ok(page.getContent());
+    @GetMapping()
+    public ResponseEntity<Iterable<CashCard>> findAll() {
+        return ResponseEntity.ok(cashCardRepository.findAll());
     }
 
     @GetMapping("/{requestedId}")

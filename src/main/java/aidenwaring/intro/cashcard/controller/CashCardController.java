@@ -23,13 +23,13 @@ public class CashCardController {
         this.cashCardRepository = $cashCardRepository;
     }
 
-    @PostMapping
     // Spring Web will deserialize the data from the request body into an object
     /*
     We were able to add UriComponentsBuilder ucb as a method argument to this POST
     handler method, and it was automatically passed in. How so?
     It was injected from our now-familiar friend, Spring's IoC Container.
      */
+    @PostMapping
     private ResponseEntity<Void> createCashCard(@RequestBody CashCard newCashCardRequest, UriComponentsBuilder ucb) {
         CashCard savedCashCard = cashCardRepository.save(newCashCardRequest);
         // Building a URI to provide

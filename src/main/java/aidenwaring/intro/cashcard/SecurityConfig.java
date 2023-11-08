@@ -36,6 +36,15 @@ public class SecurityConfig {
         return http.build();
     }
 
+    /*
+    ^^^
+    Why is CSRF disabled?
+
+    From the Spring Security team:
+    Our recommendation is to use CSRF protection for any request that could be processed by a browser by normal users.
+    If you are only creating a service that is used by non-browser clients, you will likely want to disable CSRF protection.
+     */
+
     @Bean
     public UserDetailsService testOnlyUsers(PasswordEncoder passwordEncoder) {
         User.UserBuilder users = User.builder();

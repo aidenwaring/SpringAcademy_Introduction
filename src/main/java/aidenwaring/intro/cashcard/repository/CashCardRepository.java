@@ -14,4 +14,12 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 public interface CashCardRepository extends CrudRepository<CashCard, Long>, PagingAndSortingRepository<CashCard, Long> {
     CashCard findByIdAndOwner(Long id, String owner);
     Page<CashCard> findByOwner(String owner, PageRequest pageRequest);
+
+    /*
+        Why not just use the findByIdAndOwner() method and check whether it returns null?
+        Such a call would return extra information (the content of the Cash Card retrieved),
+        so we'd like to avoid it as to not introduce extra complexity.
+     */
+    boolean existsByIdAndOwner(Long id, String owner);
+
 }

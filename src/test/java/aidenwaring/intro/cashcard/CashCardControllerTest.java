@@ -30,6 +30,10 @@ class CashCardControllerTest {
     @Autowired
     TestRestTemplate restTemplate;
 
+    /*
+        CREATE
+     */
+
     @Test
     void shouldCreateANewCashCard() {
         CashCard cashCard = new CashCard(null, 250.00, null);
@@ -57,6 +61,10 @@ class CashCardControllerTest {
         assertThat(id).isNotNull();
         assertThat(amount).isEqualTo(250.00);
     }
+
+    /*
+        GET (READ)
+     */
 
     @Test
     void shouldReturnAllCashCardsWhenListIsRequested() {
@@ -177,6 +185,10 @@ class CashCardControllerTest {
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
 
+    /*
+        PUT (UPDATE)
+     */
+
     @Test
     @DirtiesContext
     void shouldUpdateAnExistingCashCard() {
@@ -223,4 +235,49 @@ class CashCardControllerTest {
                 .exchange("/cashcards/102", HttpMethod.PUT, request, Void.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
+
+    /*
+        DELETE
+     */
+
+    /*
+        The other methods we've been using (such as getForEntity() and exchange()) return a ResponseEntity,
+        but delete() doesn't. Instead, it's a void method. Why is this?
+
+        The Spring Web framework supplies the delete() method as a convenience,
+        but it comes with some assumptions:
+
+        A response to a DELETE request will have no body.
+        The client shouldn't care what the response code is unless it's an error, in which case,
+        it'll throw an exception.
+
+        Given those assumptions, no return value is needed from delete().
+
+        But, the second assumption makes delete() unsuitable for us:
+        We need the ResponseEntity in order to assert on the status code!
+        So, we won't use the convenience method, but rather let's use the more general method: exchange().
+     */
+    @Test
+    @DirtiesContext
+    void shouldDeleteAnExistingCashCard() {
+        ResponseEntity<Void> response = restTemplate
+                .withBasicAuth("sarah1", "abc123")
+                .exchange("/cashcards/99", HttpMethod.DELETE, null, Void.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+
+        // Try get the deleted card and assert it is not found
+        ResponseEntity<String> getResponse = restTemplate
+                .withBasicAuth("sarah1", "abc123")
+                .getForEntity("/cashcards/99", String.class);
+        assertThat(getResponse.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+    }
+
+    @Test
+    void shouldNotDeleteACashCardThatDoesNotExist() {
+        ResponseEntity<Void> deleteResponse = restTemplate
+                .withBasicAuth("sarah1", "abc123")
+                .exchange("/cashcards/99999", HttpMethod.DELETE, null, Void.class);
+        assertThat(deleteResponse.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+    }
+
 }

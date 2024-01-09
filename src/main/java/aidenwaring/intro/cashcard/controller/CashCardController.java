@@ -25,9 +25,9 @@ public class CashCardController {
 
     // Spring Web will deserialize the data from the request body into an object
     /*
-    We were able to add UriComponentsBuilder ucb as a method argument to this POST
-    handler method, and it was automatically passed in. How so?
-    It was injected from our now-familiar friend, Spring's IoC Container.
+        We were able to add UriComponentsBuilder ucb as a method argument to this POST
+        handler method, and it was automatically passed in. How so?
+        It was injected from our now-familiar friend, Spring's IoC Container.
      */
     @PostMapping
     private ResponseEntity<Void> createCashCard(@RequestBody CashCard newCashCardRequest, UriComponentsBuilder ucb, Principal principal) {
@@ -76,6 +76,16 @@ public class CashCardController {
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.notFound().build();
+    }
+
+    @DeleteMapping("/{id}")
+    private ResponseEntity<Void> deleteCashCard(@PathVariable Long id, Principal principal) {
+        // Checks if the record exists and the Principal is the owner of the card
+        if (!cashCardRepository.existsByIdAndOwner(id, principal.getName())) {
+            return ResponseEntity.notFound().build();
+        }
+        cashCardRepository.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 
     private CashCard getByIdAndOwner(Long requestedId, Principal principal) {
